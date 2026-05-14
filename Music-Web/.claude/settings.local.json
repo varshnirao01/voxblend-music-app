@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"E:\\\\Downloads\\\\Music-Web\\\\Music-Web\" -Recurse -Force)",
+      "Bash(Select-Object -Property FullName, PSIsContainer)",
+      "Bash(ConvertTo-Json -Depth 100)",
+      "Bash(Out-String)",
+      "Bash(New-Item -ItemType Directory -Force -Path \"C:\\\\Users\\\\shash\\\\.claude\\\\projects\\\\E--Downloads-Music-Web-Music-Web\\\\memory\")",
+      "Bash(Out-Null)",
+      "PowerShell(Get-Service *)",
+      "PowerShell(Get-Process *)"
+    ]
+  }
+}

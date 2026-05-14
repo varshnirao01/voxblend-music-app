@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Upload Song — Music App</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .upload-layout {
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 48px 24px;
+    }
+
+    .upload-header {
+      text-align: center;
+      margin-bottom: 36px;
+      animation: fadeIn 0.4s ease both;
+    }
+
+    .upload-icon {
+      width: 64px; height: 64px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, var(--accent), #4638d4);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+      box-shadow: 0 8px 32px var(--accent-glow);
+    }
+
+    .upload-header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 6px;
+    }
+
+    .upload-header p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .upload-form-card {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      animation: fadeIn 0.4s ease 0.1s both;
+    }
+
+    .field-group {
+      margin-bottom: 20px;
+    }
+
+    .field-group label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+    }
+
+    .field-with-icon {
+      position: relative;
+    }
+
+    .field-with-icon .f-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-faint);
+      pointer-events: none;
+      display: flex;
+      transition: var(--trans);
+    }
+
+    .field-with-icon:focus-within .f-icon { color: var(--accent-light); }
+
+    .field-with-icon input {
+      width: 100%;
+      padding: 12px 14px 12px 44px;
+      background: var(--bg-3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      transition: var(--trans);
+    }
+
+    .field-with-icon input:focus {
+      border-color: var(--accent);
+      background: rgba(109, 90, 255, 0.04);
+      box-shadow: 0 0 0 3px var(--accent-dim);
+    }
+
+    .field-with-icon input::placeholder { color: var(--text-faint); }
+
+    /* File drop zone */
+    .file-zone {
+      border: 2px dashed var(--border-md);
+      border-radius: var(--radius);
+      padding: 36px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      position: relative;
+      background: var(--bg-3);
+    }
+
+    .file-zone:hover,
+    .file-zone.drag-over {
+      border-color: var(--accent);
+      background: rgba(109, 90, 255, 0.04);
+    }
+
+    .file-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+
+    .file-zone-icon {
+      width: 48px; height: 48px;
+      border-radius: 14px;
+      background: var(--bg-4);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 14px;
+      color: var(--text-muted);
+      transition: var(--trans);
+    }
+
+    .file-zone:hover .file-zone-icon,
+    .file-zone.drag-over .file-zone-icon {
+      background: var(--accent-dim);
+      color: var(--accent-light);
+    }
+
+    .file-zone-text {
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .file-zone-hint {
+      font-size: 0.78rem;
+      color: var(--text-faint);
+    }
+
+    .file-selected {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: var(--accent-dim);
+      border-radius: var(--radius-sm);
+      font-size: 0.84rem;
+      color: var(--accent-light);
+      display: none;
+    }
+
+    .file-selected svg { flex-shrink: 0; }
+
+    .upload-submit {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--accent), #4638d4);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--trans);
+      box-shadow: 0 4px 20px var(--accent-glow);
+      margin-top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      letter-spacing: 0.01em;
+    }
+
+    .upload-submit:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.08);
+      box-shadow: 0 6px 28px rgba(109, 90, 255, 0.4);
+    }
+
+    .upload-submit:active { transform: translateY(0); }
+
+    .upload-submit:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+      filter: none;
+    }
+
+    .progress-bar-wrap {
+      height: 4px;
+      background: var(--bg-4);
+      border-radius: 2px;
+      margin-top: 16px;
+      overflow: hidden;
+      display: none;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--cyan));
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.3s ease;
+      animation: shimmer 1.5s infinite;
+      background-size: 400% 100%;
+    }
+
+    .msg-box {
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-top: 14px;
+      display: none;
+    }
+    .msg-box.error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      color: #f87171;
+    }
+    .msg-box.success {
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.2);
+      color: #4ade80;
+    }
+    .msg-box.info {
+      background: var(--accent-dim);
+      border: 1px solid var(--border-accent);
+      color: var(--accent-light);
+    }
+  </style>
+</head>
+<body>
+  <div id="navbarContainer"></div>
+
+  <div class="upload-layout">
+    <div class="upload-header">
+      <div class="upload-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="16 16 12 12 8 16"/>
+          <line x1="12" y1="12" x2="12" y2="21"/>
+          <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
+        </svg>
+      </div>
+      <h1>Upload a Song</h1>
+      <p>Share your music with the community</p>
+    </div>
+
+    <div class="upload-form-card">
+      <form id="uploadForm">
+        <div class="field-group">
+          <label for="title">Song Title</label>
+          <div class="field-with-icon">
+            <div class="f-icon">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+            </div>
+            <input type="text" id="title" placeholder="Enter the song title" required />
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="bgmUsed">BGM / Background Music</label>
+          <div class="field-with-icon">
+            <div class="f-icon">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            </div>
+            <input type="text" id="bgmUsed" placeholder="Background music used (optional)" />
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>Audio File</label>
+          <div class="file-zone" id="fileZone">
+            <input type="file" id="file" accept="audio/*" required />
+            <div class="file-zone-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+            </div>
+            <div class="file-zone-text">Click to select or drag & drop</div>
+            <div class="file-zone-hint">MP3, WAV, OGG, M4A supported</div>
+          </div>
+          <div class="file-selected" id="fileSelected">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span id="fileName">No file selected</span>
+          </div>
+        </div>
+
+        <div class="progress-bar-wrap" id="progressWrap">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="msg-box" id="msgBox"></div>
+
+        <button type="submit" class="upload-submit" id="submitBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+          Upload Song
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    fetch('navbar.html').then(r => r.text()).then(h => {
+      document.getElementById('navbarContainer').innerHTML = h;
+    });
+
+    const fileInput    = document.getElementById('file');
+    const fileZone     = document.getElementById('fileZone');
+    const fileSelected = document.getElementById('fileSelected');
+    const fileName     = document.getElementById('fileName');
+    const msgBox       = document.getElementById('msgBox');
+    const submitBtn    = document.getElementById('submitBtn');
+    const progressWrap = document.getElementById('progressWrap');
+    const progressFill = document.getElementById('progressFill');
+
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files[0]) {
+        fileName.textContent = fileInput.files[0].name;
+        fileSelected.style.display = 'flex';
+      }
+    });
+
+    fileZone.addEventListener('dragover', (e) => { e.preventDefault(); fileZone.classList.add('drag-over'); });
+    fileZone.addEventListener('dragleave', ()  => fileZone.classList.remove('drag-over'));
+    fileZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      fileZone.classList.remove('drag-over');
+      if (e.dataTransfer.files[0]) {
+        fileInput.files = e.dataTransfer.files;
+        fileName.textContent = e.dataTransfer.files[0].name;
+        fileSelected.style.display = 'flex';
+      }
+    });
+
+    function showMsg(type, text) {
+      msgBox.className = 'msg-box ' + type;
+      msgBox.textContent = text;
+      msgBox.style.display = 'block';
+    }
+
+    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const title   = document.getElementById('title').value.trim();
+      const bgmUsed = document.getElementById('bgmUsed').value.trim();
+      const file    = fileInput.files[0];
+
+      if (!file) { showMsg('error', 'Please select an audio file.'); return; }
+
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('bgmUsed', bgmUsed);
+      formData.append('file', file);
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg> Uploading...';
+
+      progressWrap.style.display = 'block';
+      let p = 0;
+      const tick = setInterval(() => {
+        p = Math.min(p + Math.random() * 8, 85);
+        progressFill.style.width = p + '%';
+      }, 180);
+
+      try {
+        const res = await fetch('http://localhost:5000/api/uploads', {
+          method: 'POST',
+          body: formData,
+        });
+
+        clearInterval(tick);
+        progressFill.style.width = '100%';
+
+        if (res.ok) {
+          showMsg('success', 'Song uploaded successfully! Redirecting...');
+          setTimeout(() => { window.location.href = 'index.html'; }, 1400);
+        } else {
+          showMsg('error', 'Upload failed. Please try again.');
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg> Upload Song';
+          progressWrap.style.display = 'none';
+        }
+      } catch {
+        clearInterval(tick);
+        showMsg('error', 'Cannot connect to server. Please try again later.');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg> Upload Song';
+        progressWrap.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

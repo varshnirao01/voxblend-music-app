@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In — Music App</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Background orbs */
+    .bg-orb {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      filter: blur(80px);
+      opacity: 0.35;
+    }
+    .bg-orb-1 {
+      width: 520px; height: 520px;
+      background: radial-gradient(circle, var(--accent), transparent 70%);
+      top: -180px; left: -180px;
+    }
+    .bg-orb-2 {
+      width: 420px; height: 420px;
+      background: radial-gradient(circle, var(--cyan), transparent 70%);
+      bottom: -160px; right: -160px;
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 420px;
+      background: rgba(15, 15, 30, 0.85);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 48px 44px;
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      box-shadow: var(--shadow-lg);
+      animation: fadeIn 0.5s ease both;
+      position: relative;
+      z-index: 1;
+    }
+
+    .auth-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+
+    .auth-logo-icon {
+      width: 48px; height: 48px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent), #4638d4);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 6px 24px var(--accent-glow);
+    }
+
+    .auth-logo span {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--text);
+    }
+
+    .auth-heading {
+      font-size: 1.55rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .auth-subheading {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 30px;
+    }
+
+    .auth-submit {
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(135deg, var(--accent), #4638d4);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--trans);
+      box-shadow: 0 4px 20px var(--accent-glow);
+      margin-top: 8px;
+      letter-spacing: 0.01em;
+    }
+    .auth-submit:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 30px rgba(109, 90, 255, 0.4);
+      filter: brightness(1.08);
+    }
+    .auth-submit:active { transform: translateY(0); }
+
+    .auth-links {
+      margin-top: 22px;
+      text-align: center;
+    }
+    .auth-links p {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .auth-links a {
+      color: var(--accent-light);
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--trans);
+    }
+    .auth-links a:hover { color: #fff; text-decoration: underline; }
+
+    .msg-box {
+      padding: 11px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .msg-box.error {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      color: #f87171;
+    }
+    .msg-box.success {
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.2);
+      color: #4ade80;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="auth-logo-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 18V5l12-2v13"/>
+          <circle cx="6" cy="18" r="3"/>
+          <circle cx="18" cy="16" r="3"/>
+        </svg>
+      </div>
+      <span>Music App</span>
+    </div>
+
+    <h1 class="auth-heading">Welcome back</h1>
+    <p class="auth-subheading">Sign in to continue listening</p>
+
+    <div id="msgBox" class="msg-box"></div>
+
+    <form id="loginForm" autocomplete="off">
+      <div class="input-wrap">
+        <label for="username">Username</label>
+        <div class="input-icon">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <input type="text" id="username" placeholder="Enter your username" required autocomplete="username" />
+      </div>
+
+      <div class="input-wrap">
+        <label for="password">Password</label>
+        <div class="input-icon">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <input type="password" id="password" placeholder="Enter your password" required autocomplete="current-password" />
+      </div>
+
+      <button type="submit" class="auth-submit" id="submitBtn">Sign In</button>
+    </form>
+
+    <div class="auth-links">
+      <p>Don't have an account? <a href="music_register.html">Create one</a></p>
+    </div>
+  </div>
+
+  <script>
+    const form    = document.getElementById('loginForm');
+    const msgBox  = document.getElementById('msgBox');
+    const submitBtn = document.getElementById('submitBtn');
+
+    function showMsg(type, text) {
+      msgBox.className = 'msg-box ' + type;
+      msgBox.textContent = text;
+      msgBox.style.display = 'block';
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Signing in...';
+
+      try {
+        const res  = await fetch('http://localhost:5000/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password }),
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          localStorage.setItem('username', username);
+          showMsg('success', 'Login successful. Redirecting...');
+          setTimeout(() => { window.location.href = 'language.html'; }, 800);
+        } else {
+          showMsg('error', data.message || 'Invalid credentials. Please try again.');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Sign In';
+        }
+      } catch {
+        showMsg('error', 'Cannot connect to server. Please try again later.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Sign In';
+      }
+    });
+  </script>
+</body>
+</html>

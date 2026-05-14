@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Music — Music App</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .music-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .music-header-left h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 4px;
+    }
+
+    .music-header-left p {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .music-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .music-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 20px;
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      transition: all 0.22s ease;
+      animation: slideUp 0.4s ease both;
+    }
+
+    .music-row:hover {
+      background: var(--bg-3);
+      border-color: var(--border-md);
+      transform: translateX(3px);
+    }
+
+    .music-row-index {
+      width: 28px;
+      font-size: 0.78rem;
+      color: var(--text-faint);
+      font-weight: 500;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .music-row-art {
+      width: 46px; height: 46px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--bg-3), var(--bg-4));
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-faint);
+      flex-shrink: 0;
+    }
+
+    .music-row-meta { flex: 1; min-width: 0; }
+
+    .music-row-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 2px;
+    }
+
+    .music-row-audio {
+      width: 100%;
+      height: 28px;
+      margin-top: 8px;
+      filter: invert(1) hue-rotate(200deg) brightness(0.7);
+    }
+
+    .music-row-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .like-count {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      min-width: 44px;
+    }
+
+    .btn-like {
+      width: 36px; height: 36px;
+      border: 1px solid rgba(239,68,68,0.2);
+      border-radius: 50%;
+      background: rgba(239,68,68,0.08);
+      color: #f87171;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: var(--trans);
+    }
+
+    .btn-like:hover {
+      background: rgba(239,68,68,0.18);
+      border-color: rgba(239,68,68,0.4);
+      transform: scale(1.1);
+    }
+
+    .btn-like.liked {
+      background: rgba(239,68,68,0.2);
+      border-color: rgba(239,68,68,0.5);
+      color: #fca5a5;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 80px 24px;
+      color: var(--text-muted);
+    }
+    .empty-state svg { margin: 0 auto 14px; display: block; opacity: 0.2; }
+    .empty-state p { font-size: 0.95rem; margin-bottom: 16px; }
+  </style>
+</head>
+<body>
+  <div id="navbarContainer"></div>
+
+  <div class="page-wrap">
+    <div class="music-header">
+      <div class="music-header-left">
+        <h1>Community Songs</h1>
+        <p>Browse and like tracks uploaded by everyone</p>
+      </div>
+      <button class="btn btn-primary" onclick="window.location.href='upload.html'">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+        Upload Song
+      </button>
+    </div>
+
+    <div class="music-list" id="songsList"></div>
+  </div>
+
+  <script>
+    fetch('navbar.html').then(r => r.text()).then(h => {
+      document.getElementById('navbarContainer').innerHTML = h;
+    });
+
+    const songsList = document.getElementById('songsList');
+
+    async function loadSongs() {
+      try {
+        const res   = await fetch('http://localhost:5000/api/uploads');
+        const songs = await res.json();
+
+        songsList.innerHTML = '';
+
+        if (!songs.length) {
+          songsList.innerHTML = `
+            <div class="empty-state">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+              <p>No songs uploaded yet</p>
+              <button class="btn btn-primary" onclick="window.location.href='upload.html'">Be the first to upload</button>
+            </div>
+          `;
+          return;
+        }
+
+        songs.forEach((song, i) => {
+          const row = document.createElement('div');
+          row.className = 'music-row';
+          row.style.animationDelay = (i * 0.05) + 's';
+
+          const safeId  = song._id;
+          const audioSrc = 'http://localhost:5000' + song.fileUrl;
+
+          row.innerHTML = `
+            <div class="music-row-index">${i + 1}</div>
+            <div class="music-row-art">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+            </div>
+            <div class="music-row-meta">
+              <div class="music-row-title">${song.title}</div>
+              <audio class="music-row-audio" controls>
+                <source src="${audioSrc}" type="audio/mpeg">
+              </audio>
+            </div>
+            <div class="music-row-right">
+              <div class="like-count" id="likes-${safeId}">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                ${song.likes || 0}
+              </div>
+              <button class="btn-like" onclick="likeSong('${safeId}', this)" title="Like this song">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              </button>
+            </div>
+          `;
+          songsList.appendChild(row);
+        });
+      } catch {
+        songsList.innerHTML = `
+          <div class="empty-state">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <p>Could not connect to server</p>
+          </div>
+        `;
+      }
+    }
+
+    async function likeSong(id, btn) {
+      try {
+        btn.disabled = true;
+        const res = await fetch(`http://localhost:5000/api/uploads/${id}/like`, { method: 'PUT' });
+        if (res.ok) {
+          btn.classList.add('liked');
+          const likeEl = document.getElementById('likes-' + id);
+          if (likeEl) {
+            const current = parseInt(likeEl.textContent.trim().split('\n').pop()) || 0;
+            likeEl.innerHTML = `
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="#f87171" stroke="#f87171" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              ${current + 1}
+            `;
+          }
+        }
+      } catch {
+        btn.disabled = false;
+      }
+    }
+
+    loadSongs();
+  </script>
+</body>
+</html>
