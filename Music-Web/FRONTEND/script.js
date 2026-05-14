@@ -1,4 +1,5 @@
-const apiBase = 'http://localhost:5000/api';
+// const apiBase = 'http://localhost:5000/api';
+const apiBase = 'https://voxblend-music-app-1.onrender.com/api';
 
 const audio       = document.getElementById('audioPlayer');
 const vinyl       = document.getElementById('vinyl');
@@ -76,7 +77,8 @@ async function loadUploads() {
       row.className = 'song-row';
       row.style.animationDelay = (i * 0.06) + 's';
 
-      const url    = 'http://localhost:5000' + u.fileUrl;
+      // const url    = 'http://localhost:5000' + u.fileUrl;
+      const url = 'https://voxblend-music-app-1.onrender.com' + u.fileUrl;
       const title  = u.title || 'Untitled';
       const artist = u.userId?.username || 'Unknown';
 
