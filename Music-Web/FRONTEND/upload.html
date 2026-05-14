@@ -380,12 +380,13 @@
       }, 180);
 
       try {
-        const API_URL = "https://voxblend-music-app-1.onrender.com";
+       const API_URL = "https://voxblend-music-app-1.onrender.com";
 
-        const res = await fetch(`${API_URL}/api/uploads`, {
-          method: 'POST',
-          body: formData,
-        });
+const res = await fetch(`${API_URL}/api/uploads`, {
+  method: 'POST',
+  body: formData,
+});
+      
 
         clearInterval(tick);
         progressFill.style.width = '100%';
