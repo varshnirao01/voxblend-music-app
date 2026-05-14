@@ -1,5 +1,5 @@
 // const apiBase = 'http://localhost:5000/api';
-const apiBase = 'https://voxblend-music-app-1.onrender.com/api';
+const API_URL = "https://voxblend-music-app-1.onrender.com";
 
 const audio       = document.getElementById('audioPlayer');
 const vinyl       = document.getElementById('vinyl');
