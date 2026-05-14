@@ -168,7 +168,6 @@
 //   updateSubscription();
 // });
 const API_URL = "https://voxblend-music-app-1.onrender.com";
-const API_URL = "https://voxblend-music-app-1.onrender.com";
 
 const audio       = document.getElementById('audioPlayer');
 const vinyl       = document.getElementById('vinyl');
