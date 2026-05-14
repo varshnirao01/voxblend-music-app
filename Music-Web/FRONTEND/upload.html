@@ -380,7 +380,9 @@
       }, 180);
 
       try {
-        const res = await fetch('http://localhost:5000/api/uploads', {
+        const API_URL = "https://voxblend-music-app-1.onrender.com";
+
+        const res = await fetch(`${API_URL}/api/uploads`, {
           method: 'POST',
           body: formData,
         });
